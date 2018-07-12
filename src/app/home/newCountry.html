@@ -1,0 +1,9 @@
+<form style="margin: 24px 12px 24px 12px;">
+  <mat-form-field>
+    <input matInput placeholder="Country Name" [formControl]="countryFormControl">
+    <mat-error *ngIf="countryFormControl.hasError('required')">
+      Country Name is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+  <button style="margin-left:24px;" mat-raised-button color="primary" (click)="saveCountry()">Save</button>
+</form>

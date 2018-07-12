@@ -1,16 +1,48 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  MatAutocompleteModule, MatButtonModule, MatDialogModule, MatFormField, MatIconModule, MatInputModule,
+   MatProgressSpinnerModule, MatSelectModule,
+  MatSnackBar, MatCardModule, MatToolbarModule, MatBottomSheetModule,
+  MatSnackBarModule
+} from '@angular/material';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
+import { HomeComponent, NewCountryComponent } from './home/home.component';
+import { ParseService } from './parse.service';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    HomeComponent,
+    NewCountryComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    MatProgressSpinnerModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    MatInputModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSelectModule,
+    MatCardModule,
+    MatToolbarModule,
+    MatBottomSheetModule,
+    RouterModule.forRoot([
+      { path: 'home', component: HomeComponent }
+    ])
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [HomeComponent, ParseService],
+  bootstrap: [AppComponent],
+  entryComponents: [NewCountryComponent]
 })
 export class AppModule { }
