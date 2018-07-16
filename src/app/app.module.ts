@@ -12,14 +12,14 @@ import {
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
-import { HomeComponent, NewCountryComponent } from './home/home.component';
+import { HomeComponent, NewComponent } from './home/home.component';
 import { ParseService } from './parse.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    NewCountryComponent
+    NewComponent
   ],
   imports: [
     BrowserModule,
@@ -43,6 +43,6 @@ import { ParseService } from './parse.service';
   ],
   providers: [HomeComponent, ParseService],
   bootstrap: [AppComponent],
-  entryComponents: [NewCountryComponent]
+  entryComponents: [NewComponent]
 })
 export class AppModule { }

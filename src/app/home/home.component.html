@@ -1,72 +1,80 @@
 <mat-toolbar color="primary">
-    <span>Add New Data</span>
-  </mat-toolbar>
+  <span>Add New Data</span>
+</mat-toolbar>
 
-  <mat-card>
-    <!-- Country -->
-    <div>
+<mat-spinner *ngIf="isLoading" style="margin: 0 auto;" [diameter]=40></mat-spinner>
+
+<mat-card *ngIf="!isLoading">
+  <!-- Country -->
+  <div>
     <mat-form-field>
-      <mat-select placeholder="Country" [(ngModel)]="selectedCountry" name="country">
+      <mat-select placeholder="Country" [(ngModel)]="selectedCountry" (selectionChange)="loadRecords('State')" name="country">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let country of countries" [value]="country.value">{{country.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-button color="accent" (click)="openBottomSheet()">New</button>
-    </div>
+    <button mat-button *ngIf="!selectedCountry" color="accent" (click)="openBottomSheet('Country')">New</button>
+  </div>
 
-    <!-- State -->
-    <div>
+  <!-- State -->
+  <div>
     <mat-form-field>
-      <mat-select placeholder="State" [(ngModel)]="selectedState" name="state" [disabled]="!selectedCountry">
+      <mat-select placeholder="State" [(ngModel)]="selectedState" (selectionChange)="loadRecords('District')" name="state" [disabled]="!selectedCountry">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let state of states" [value]="state.value">{{state.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    </div>
+    <button mat-button *ngIf="!selectedState" color="accent" (click)="openBottomSheet('State')">New</button>
+  </div>
 
-    <!-- District -->
-    <div>
+  <!-- District -->
+  <div>
     <mat-form-field>
-      <mat-select placeholder="District" [(ngModel)]="selectedDistrict" name="district" [disabled]="!selectedState">
+      <mat-select placeholder="District" [(ngModel)]="selectedDistrict" (selectionChange)="loadRecords('Block')" name="district" [disabled]="!selectedCountry || !selectedState">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let district of districts" [value]="district.value">{{district.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    </div>
+    <button mat-button *ngIf="!selectedDistrict" color="accent" (click)="openBottomSheet('District')">New</button>
+  </div>
 
-    <!-- Block -->
-    <div>
+  <!-- Block -->
+  <div>
     <mat-form-field>
-      <mat-select placeholder="Block" [(ngModel)]="selectedBlock" name="block" [disabled]="!selectedDistrict">
+      <mat-select placeholder="Block" [(ngModel)]="selectedBlock" (selectionChange)="loadRecords('Panchayat')" name="block" [disabled]="!selectedCountry || !selectedState || !selectedDistrict">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let block of blocks" [value]="block.value">{{block.viewValue}}</mat-option>
       </mat-select>
-    </mat-form-field></div>
+    </mat-form-field>
+    <button mat-button *ngIf="!selectedBlock" color="accent" (click)="openBottomSheet('Block')">New</button>
+  </div>
 
-    <!-- Panchayat -->
-    <div>
+  <!-- Panchayat -->
+  <div>
     <mat-form-field>
-      <mat-select placeholder="Panchayat" [(ngModel)]="selectedPanchayat" name="panchayat" [disabled]="!selectedBlock">
+      <mat-select placeholder="Panchayat" [(ngModel)]="selectedPanchayat" (selectionChange)="loadRecords('Village')" name="panchayat" [disabled]="!selectedCountry || !selectedState || !selectedDistrict || !selectedBlock">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let panchayat of panchayats" [value]="panchayat.value">{{panchayat.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    </div>
+    <button mat-button *ngIf="!selectedPanchayat" color="accent" (click)="openBottomSheet('Panchayat')">New</button>
+  </div>
 
-    <!-- Village -->
-    <div>
+  <!-- Village -->
+  <div>
     <mat-form-field>
-      <mat-select placeholder="Village" [(ngModel)]="selectedVillage" name="village" [disabled]="!selectedPanchayat">
+      <mat-select placeholder="Village" [(ngModel)]="selectedVillage" name="village" [disabled]="!selectedCountry || !selectedState || !selectedDistrict || !selectedBlock || !selectedPanchayat">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let village of villages" [value]="village.value">{{village.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    </div>
+    <button mat-button *ngIf="!selectedVillage" color="accent" (click)="openBottomSheet('Village')">New</button>
+  </div>
 
-    <p> Selected Country: {{selectedCountry}} </p>
-    <p> Selected State: {{selectedState}} </p>
-    <p> Selected District: {{selectedDistrict}} </p>
-    <p> Selected Block: {{selectedBlock}} </p>
-    <p> Selected Panchayat: {{selectedPanchayat}} </p>
-    <p> Selected Village: {{selectedVillage}} </p>
-  </mat-card>
+  <!-- <p> Selected Country: {{selectedCountry}} </p>
+  <p> Selected State: {{selectedState}} </p>
+  <p> Selected District: {{selectedDistrict}} </p>
+  <p> Selected Block: {{selectedBlock}} </p>
+  <p> Selected Panchayat: {{selectedPanchayat}} </p>
+  <p> Selected Village: {{selectedVillage}} </p> -->
+</mat-card>
