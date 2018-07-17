@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MatBottomSheet, MatBottomSheetRef } from '@angular/material';
+import { MatBottomSheet, MatBottomSheetRef, MatSnackBar } from '@angular/material';
 import { ParseService } from '../parse.service';
 import { DataService } from '../data.service';
 
@@ -14,6 +14,14 @@ let district;
 let block;
 let panchayat;
 let village;
+
+
+let countriesList;
+let statesList;
+let districtsList;
+let blocksList;
+let panchayatsList;
+let villagesList;
 
 export interface Select {
   value: string;
@@ -37,57 +45,22 @@ export class HomeComponent implements OnInit {
   selectedVillage: string;
 
   countries: Select[];
-  countriesList: Parse.Object[];
   states: Select[];
-  districts: Select[] = [
-    { value: 'Sabarkantha', viewValue: 'Sabarkantha' },
-    { value: 'Mehsana', viewValue: 'Mehsana' },
-    { value: 'Gandhinagar', viewValue: 'Gandhinagar' }
-  ];
-  blocks: Select[] = [
-    { value: 'Idar', viewValue: 'Idar' },
-    { value: 'Himmatnagar', viewValue: 'Himmatnagar' },
-    { value: 'Prantij', viewValue: 'Prantij' }
-  ];
-  panchayats: Select[] = [
-    { value: 'Jawanpura', viewValue: 'Jawanpura' },
-    { value: 'Daramali', viewValue: 'Daramali' },
-    { value: 'Kamalpur', viewValue: 'Kamalpur' }
-  ];
-  villages: Select[] = [
-    { value: 'Sadatpura', viewValue: 'Sadatpura' },
-    { value: 'Sapavada', viewValue: 'Sapavada' }
-  ];
+  districts: Select[];
+  blocks: Select[];
+  panchayats: Select[];
+  villages: Select[];
 
-  constructor(private bottomSheet: MatBottomSheet, private parseService: ParseService, private data: DataService) {
+  constructor(private bottomSheet: MatBottomSheet, private parseService: ParseService,
+     public snackBar: MatSnackBar, private dataService: DataService) {
     Parse = parseService.Parse;
   }
 
   ngOnInit() {
-    const $scope = this;
-    const Country = Parse.Object.extend('Country');
-    const countryQuery = new Parse.Query(Country);
-    countryQuery.find({
-      success: function(results) {
-        $scope.countriesList = results;
-        const cs = [];
-        for (let i = 0; i < results.length; i++) {
-          cs.push({
-            value: results[i].id,
-            viewValue: results[i].get('name')
-          });
-        }
-        $scope.countries = cs;
-      },
-      error: function(error) {
-        alert('Error: ' + error.code + ' ' + error.message);
-      }
-    });
-
-    this.data.loadRecords.subscribe(className => {
-      alert('hello');
+    this.dataService.change.subscribe(className => {
       this.loadRecords(className);
     });
+    this.loadRecords('Country');
   }
 
   openBottomSheet(className): void {
@@ -98,7 +71,56 @@ export class HomeComponent implements OnInit {
     block = this.selectedBlock;
     panchayat = this.selectedPanchayat;
     village = this.selectedVillage;
+
+    countriesList = this.countries;
+    statesList = this.states;
+    districtsList = this.districts;
+    blocksList = this.blocks;
+    panchayatsList = this.panchayats;
+    villagesList = this.villages;
+
     this.bottomSheet.open(NewComponent);
+  }
+
+  deleteRecord(className): void {
+    const $scope = this;
+
+    const classObject = Parse.Object.extend(className);
+    const recordsQuery = new Parse.Query(classObject);
+    if (className === 'Country') {
+      recordsQuery.equalTo('name', this.selectedCountry);
+    } else if (className === 'State') {
+      recordsQuery.equalTo('name', this.selectedState);
+    } else if (className === 'District') {
+      recordsQuery.equalTo('name', this.selectedDistrict);
+    } else if (className === 'Block') {
+      recordsQuery.equalTo('name', this.selectedBlock);
+    } else if (className === 'Panchayat') {
+      recordsQuery.equalTo('name', this.selectedPanchayat);
+    } else if (className === 'Village') {
+      recordsQuery.equalTo('name', this.selectedVillage);
+    }
+    recordsQuery.limit(1);
+    this.isLoading = true;
+    recordsQuery.find({
+      success: function(results) {
+        results[0].destroy({
+          success: function(myObject) {
+            $scope.isLoading = false;
+            $scope.loadRecords(className);
+            $scope.openSnackBar(className + ' Deleted.', '');
+          },
+          error: function(myObject, error) {
+            $scope.isLoading = false;
+            $scope.openSnackBar('Failed to delete ' + className + ', with error- ' + error.code + ' : ' + error.message, '');
+          }
+        });
+      },
+      error: function(error) {
+        $scope.isLoading = false;
+        $scope.openSnackBar('Failed to delete ' + className + ', with error- ' + error.code + ' : ' + error.message, '');
+      }
+    });
   }
 
   loadRecords(className): void {
@@ -161,15 +183,15 @@ export class HomeComponent implements OnInit {
     const classObject = Parse.Object.extend(className);
     const recordsQuery = new Parse.Query(classObject);
     if (className === 'State') {
-      recordsQuery.equalTo(classNameSelected.toLowerCase(), this.getClassObject(classNameSelected, this.selectedCountry));
+      recordsQuery.equalTo(classNameSelected.toLowerCase(), this.selectedCountry);
     } else if (className === 'District') {
-      recordsQuery.equalTo(classNameSelected.toLowerCase(), this.getClassObject(classNameSelected, this.selectedState));
+      recordsQuery.equalTo(classNameSelected.toLowerCase(), this.selectedState);
     } else if (className === 'Block') {
-      recordsQuery.equalTo(classNameSelected.toLowerCase(), this.getClassObject(classNameSelected, this.selectedDistrict));
+      recordsQuery.equalTo(classNameSelected.toLowerCase(), this.selectedDistrict);
     } else if (className === 'Panchayat') {
-      recordsQuery.equalTo(classNameSelected.toLowerCase(), this.getClassObject(classNameSelected, this.selectedBlock));
+      recordsQuery.equalTo(classNameSelected.toLowerCase(), this.selectedBlock);
     } else if (className === 'Village') {
-      recordsQuery.equalTo(classNameSelected.toLowerCase(), this.getClassObject(classNameSelected, this.selectedPanchayat));
+      recordsQuery.equalTo(classNameSelected.toLowerCase(), this.selectedPanchayat);
     }
 
     this.isLoading = true;
@@ -178,14 +200,15 @@ export class HomeComponent implements OnInit {
         const records = [];
         for (let i = 0; i < results.length; i++) {
           records.push({
-            value: results[i].id,
+            value: results[i].get('name'),
             viewValue: results[i].get('name')
           });
         }
         $scope.setRecords(className, records);
       },
       error: function(error) {
-        alert('Error: ' + error.code + ' ' + error.message);
+        this.isLoading = false;
+        $scope.openSnackBar('Failed to get ' + className + ' records, with error- ' + error.code + ' : ' + error.message, '');
       }
     });
   }
@@ -214,6 +237,12 @@ export class HomeComponent implements OnInit {
     classObject.id = objectId;
     return classObject;
   }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
+  }
 }
 
 
@@ -229,9 +258,8 @@ export class NewComponent implements OnInit {
 
   className = newType;
 
-  @Output() loadRecordsEvent = new EventEmitter<string>();
-
-  constructor(private bottomSheetRef: MatBottomSheetRef<NewComponent>, private parseService: ParseService) {
+  constructor(private bottomSheetRef: MatBottomSheetRef<NewComponent>, private parseService: ParseService,
+    public snackBar: MatSnackBar, private dataService: DataService) {
     Parse = parseService.Parse;
   }
 
@@ -240,42 +268,42 @@ export class NewComponent implements OnInit {
 
   saveNew(): void {
     const $scope = this;
-    this.bottomSheetRef.dismiss();
     // event.preventDefault();
 
     const NewObject = Parse.Object.extend(this.className);
     const newObject = new NewObject();
-    if (this.className === 'State') {
-      newObject.set('country', this.getClassObject('Country', country));
+    if (this.formControl.value === '') {
+      this.openSnackBar(this.className + ' Name required.', '');
+      return;
+    }
+    if (this.className === 'Country') {
+      if (this.isNameExists(countriesList, this.formControl.value)) { return; }
+    } else if (this.className === 'State') {
+      if (this.isNameExists(statesList, this.formControl.value)) { return; }
+      newObject.set('country', country);
     } else if (this.className === 'District') {
-      newObject.set('state', this.getClassObject('State', state));
+      if (this.isNameExists(districtsList, this.formControl.value)) { return; }
+      newObject.set('state', state);
     } else if (this.className === 'Block') {
-      newObject.set('district', this.getClassObject('District', district));
+      if (this.isNameExists(blocksList, this.formControl.value)) { return; }
+      newObject.set('district', district);
     } else if (this.className === 'Panchayat') {
-      newObject.set('block', this.getClassObject('Block', block));
+      if (this.isNameExists(panchayatsList, this.formControl.value)) { return; }
+      newObject.set('block', block);
     } else if (this.className === 'Village') {
-      newObject.set('panchayat', this.getClassObject('Panchayat', panchayat));
+      if (this.isNameExists(villagesList, this.formControl.value)) { return; }
+      newObject.set('panchayat', panchayat);
     }
     newObject.set('name', this.formControl.value);
 
     newObject.save(null, {
       success: function (response) {
-        // if (this.className === 'State') {
-
-        // } else if (this.className === 'District') {
-        //   newObject.set('state', this.getClassObject('State', state));
-        // } else if (this.className === 'Block') {
-        //   newObject.set('district', this.getClassObject('District', district));
-        // } else if (this.className === 'Panchayat') {
-        //   newObject.set('block', this.getClassObject('Block', block));
-        // } else if (this.className === 'Village') {
-        //   newObject.set('panchayat', this.getClassObject('Panchayat', panchayat));
-        // }
-        alert('New ' + $scope.className + ' saved.');
-        this.loadRecordsEvent.emit(this.className);
+        $scope.openSnackBar('New ' + $scope.className + ' saved.', '');
+        $scope.dataService.loadRecords($scope.className);
+        $scope.bottomSheetRef.dismiss();
       },
       error: function (response, error) {
-        alert('Failed to create new object, with error code: ' + error.message);
+        $scope.openSnackBar('Failed to create new object, with error- ' + error.code + ' : ' + error.message, '');
       }
     });
   }
@@ -285,5 +313,21 @@ export class NewComponent implements OnInit {
     const classObject = new ClassObject();
     classObject.id = objectId;
     return classObject;
+  }
+
+  isNameExists(objectList, name): boolean {
+    for (const i in objectList) {
+      if (objectList[i].value === name) {
+        this.openSnackBar(this.className + ' Name already exists.', '');
+        return true;
+      }
+    }
+    return false;
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
   }
 }

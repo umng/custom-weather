@@ -13,6 +13,9 @@
         <mat-option *ngFor="let country of countries" [value]="country.value">{{country.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
+    <button mat-icon-button *ngIf="selectedCountry" color="accent" (click)="deleteRecord('Country')">
+      <mat-icon aria-label="Example icon-button with a delete icon">delete</mat-icon>
+    </button>
     <button mat-button *ngIf="!selectedCountry" color="accent" (click)="openBottomSheet('Country')">New</button>
   </div>
 
@@ -24,18 +27,25 @@
         <mat-option *ngFor="let state of states" [value]="state.value">{{state.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-button *ngIf="!selectedState" color="accent" (click)="openBottomSheet('State')">New</button>
+    <button mat-icon-button *ngIf="selectedState" color="accent" (click)="deleteRecord('State')">
+      <mat-icon aria-label="Example icon-button with a delete icon">delete</mat-icon>
+    </button>
+    <button mat-button *ngIf="selectedCountry && !selectedState" color="accent" (click)="openBottomSheet('State')">New</button>
   </div>
 
   <!-- District -->
   <div>
     <mat-form-field>
-      <mat-select placeholder="District" [(ngModel)]="selectedDistrict" (selectionChange)="loadRecords('Block')" name="district" [disabled]="!selectedCountry || !selectedState">
+      <mat-select placeholder="District" [(ngModel)]="selectedDistrict" (selectionChange)="loadRecords('Block')" name="district"
+        [disabled]="!selectedCountry || !selectedState">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let district of districts" [value]="district.value">{{district.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-button *ngIf="!selectedDistrict" color="accent" (click)="openBottomSheet('District')">New</button>
+    <button mat-icon-button *ngIf="selectedDistrict" color="accent" (click)="deleteRecord('District')">
+      <mat-icon aria-label="Example icon-button with a delete icon">delete</mat-icon>
+    </button>
+    <button mat-button *ngIf="selectedState && !selectedDistrict" color="accent" (click)="openBottomSheet('District')">New</button>
   </div>
 
   <!-- Block -->
@@ -46,18 +56,25 @@
         <mat-option *ngFor="let block of blocks" [value]="block.value">{{block.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-button *ngIf="!selectedBlock" color="accent" (click)="openBottomSheet('Block')">New</button>
+    <button mat-icon-button *ngIf="selectedBlock" color="accent" (click)="deleteRecord('Block')">
+      <mat-icon aria-label="Example icon-button with a delete icon">delete</mat-icon>
+    </button>
+    <button mat-button *ngIf="selectedDistrict && !selectedBlock" color="accent" (click)="openBottomSheet('Block')">New</button>
   </div>
 
   <!-- Panchayat -->
   <div>
     <mat-form-field>
-      <mat-select placeholder="Panchayat" [(ngModel)]="selectedPanchayat" (selectionChange)="loadRecords('Village')" name="panchayat" [disabled]="!selectedCountry || !selectedState || !selectedDistrict || !selectedBlock">
+      <mat-select placeholder="Panchayat" [(ngModel)]="selectedPanchayat" (selectionChange)="loadRecords('Village')" name="panchayat"
+        [disabled]="!selectedCountry || !selectedState || !selectedDistrict || !selectedBlock">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let panchayat of panchayats" [value]="panchayat.value">{{panchayat.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-button *ngIf="!selectedPanchayat" color="accent" (click)="openBottomSheet('Panchayat')">New</button>
+    <button mat-icon-button *ngIf="selectedPanchayat" color="accent" (click)="deleteRecord('Panchayat')">
+      <mat-icon aria-label="Example icon-button with a delete icon">delete</mat-icon>
+    </button>
+    <button mat-button *ngIf="selectedBlock && !selectedPanchayat" color="accent" (click)="openBottomSheet('Panchayat')">New</button>
   </div>
 
   <!-- Village -->
@@ -68,7 +85,10 @@
         <mat-option *ngFor="let village of villages" [value]="village.value">{{village.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-button *ngIf="!selectedVillage" color="accent" (click)="openBottomSheet('Village')">New</button>
+    <button mat-icon-button *ngIf="selectedVillage" color="accent" (click)="deleteRecord('Village')">
+      <mat-icon aria-label="Example icon-button with a delete icon">delete</mat-icon>
+    </button>
+    <button mat-button *ngIf="selectedPanchayat && !selectedVillage" color="accent" (click)="openBottomSheet('Village')">New</button>
   </div>
 
   <!-- <p> Selected Country: {{selectedCountry}} </p>
