@@ -1,100 +1,89 @@
-<mat-toolbar color="primary">
-  <span>Add New Data</span>
-</mat-toolbar>
+<div class="homeBody">
+  <!--div>
+    <button mat-raised-button routerLink="/manage-data">Manage Data</button>
+  </div-->
+  <h1>rnsnforecast.com</h1>
 
-<mat-spinner *ngIf="isLoading" style="margin: 0 auto;" [diameter]=40></mat-spinner>
+  <mat-spinner *ngIf="isLoading" style="margin: 0 auto; margin-bottom: 12px;" [diameter]=40></mat-spinner>
 
-<mat-card *ngIf="!isLoading">
-  <!-- Country -->
-  <div>
-    <mat-form-field>
-      <mat-select placeholder="Country" [(ngModel)]="selectedCountry" (selectionChange)="loadRecords('State')" name="country">
-        <mat-option>None</mat-option>
-        <mat-option *ngFor="let country of countries" [value]="country.value">{{country.viewValue}}</mat-option>
+  <mat-card style="width: 80%;max-width: 860px; margin: 0 auto; margin-bottom: 8px;">
+    <mat-form-field class="inputSelect">
+      <mat-select class="newFont" placeholder="Country" [(ngModel)]="selectedCountry" (selectionChange)="loadRecords('State')">
+        <mat-option class="newFont">None</mat-option>
+        <mat-option class="newFont" *ngFor="let country of countries" [value]="country.value">{{country.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-icon-button *ngIf="selectedCountry" color="accent" (click)="deleteRecord('Country')">
-      <mat-icon aria-label="Example icon-button with a delete icon">delete</mat-icon>
-    </button>
-    <button mat-button *ngIf="!selectedCountry" color="accent" (click)="openBottomSheet('Country')">New</button>
-  </div>
-
-  <!-- State -->
-  <div>
-    <mat-form-field>
-      <mat-select placeholder="State" [(ngModel)]="selectedState" (selectionChange)="loadRecords('District')" name="state" [disabled]="!selectedCountry">
-        <mat-option>None</mat-option>
-        <mat-option *ngFor="let state of states" [value]="state.value">{{state.viewValue}}</mat-option>
+    <mat-form-field class="inputSelect">
+      <mat-select class="newFont" placeholder="State" [(ngModel)]="selectedState" (selectionChange)="loadRecords('District')" [disabled]="!selectedCountry">
+        <mat-option class="newFont">None</mat-option>
+        <mat-option class="newFont" *ngFor="let state of states" [value]="state.value">{{state.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-icon-button *ngIf="selectedState" color="accent" (click)="deleteRecord('State')">
-      <mat-icon aria-label="Example icon-button with a delete icon">delete</mat-icon>
-    </button>
-    <button mat-button *ngIf="selectedCountry && !selectedState" color="accent" (click)="openBottomSheet('State')">New</button>
-  </div>
-
-  <!-- District -->
-  <div>
-    <mat-form-field>
-      <mat-select placeholder="District" [(ngModel)]="selectedDistrict" (selectionChange)="loadRecords('Block')" name="district"
-        [disabled]="!selectedCountry || !selectedState">
-        <mat-option>None</mat-option>
-        <mat-option *ngFor="let district of districts" [value]="district.value">{{district.viewValue}}</mat-option>
+    <mat-form-field class="inputSelect">
+      <mat-select class="newFont" placeholder="District" [(ngModel)]="selectedDistrict" (selectionChange)="loadRecords('Block')" [disabled]="!selectedCountry || !selectedState">
+        <mat-option class="newFont">None</mat-option>
+        <mat-option class="newFont" *ngFor="let district of districts" [value]="district.value">{{district.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-icon-button *ngIf="selectedDistrict" color="accent" (click)="deleteRecord('District')">
-      <mat-icon aria-label="Example icon-button with a delete icon">delete</mat-icon>
-    </button>
-    <button mat-button *ngIf="selectedState && !selectedDistrict" color="accent" (click)="openBottomSheet('District')">New</button>
-  </div>
-
-  <!-- Block -->
-  <div>
-    <mat-form-field>
-      <mat-select placeholder="Block" [(ngModel)]="selectedBlock" (selectionChange)="loadRecords('Panchayat')" name="block" [disabled]="!selectedCountry || !selectedState || !selectedDistrict">
-        <mat-option>None</mat-option>
-        <mat-option *ngFor="let block of blocks" [value]="block.value">{{block.viewValue}}</mat-option>
+    <mat-form-field class="inputSelect">
+      <mat-select class="newFont" placeholder="Block" [(ngModel)]="selectedBlock" (selectionChange)="loadRecords('Panchayat')" [disabled]="!selectedCountry || !selectedState || !selectedDistrict">
+        <mat-option class="newFont">None</mat-option>
+        <mat-option class="newFont" *ngFor="let block of blocks" [value]="block.value">{{block.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-icon-button *ngIf="selectedBlock" color="accent" (click)="deleteRecord('Block')">
-      <mat-icon aria-label="Example icon-button with a delete icon">delete</mat-icon>
-    </button>
-    <button mat-button *ngIf="selectedDistrict && !selectedBlock" color="accent" (click)="openBottomSheet('Block')">New</button>
-  </div>
-
-  <!-- Panchayat -->
-  <div>
-    <mat-form-field>
-      <mat-select placeholder="Panchayat" [(ngModel)]="selectedPanchayat" (selectionChange)="loadRecords('Village')" name="panchayat"
-        [disabled]="!selectedCountry || !selectedState || !selectedDistrict || !selectedBlock">
-        <mat-option>None</mat-option>
-        <mat-option *ngFor="let panchayat of panchayats" [value]="panchayat.value">{{panchayat.viewValue}}</mat-option>
+    <mat-form-field class="inputSelect">
+      <mat-select class="newFont" placeholder="Panchayat" [(ngModel)]="selectedPanchayat" (selectionChange)="loadRecords('Village')" [disabled]="!selectedCountry || !selectedState || !selectedDistrict || !selectedBlock">
+        <mat-option class="newFont">None</mat-option>
+        <mat-option class="newFont" *ngFor="let panchayat of panchayats" [value]="panchayat.value">{{panchayat.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-icon-button *ngIf="selectedPanchayat" color="accent" (click)="deleteRecord('Panchayat')">
-      <mat-icon aria-label="Example icon-button with a delete icon">delete</mat-icon>
-    </button>
-    <button mat-button *ngIf="selectedBlock && !selectedPanchayat" color="accent" (click)="openBottomSheet('Panchayat')">New</button>
-  </div>
-
-  <!-- Village -->
-  <div>
-    <mat-form-field>
-      <mat-select placeholder="Village" [(ngModel)]="selectedVillage" name="village" [disabled]="!selectedCountry || !selectedState || !selectedDistrict || !selectedBlock || !selectedPanchayat">
-        <mat-option>None</mat-option>
-        <mat-option *ngFor="let village of villages" [value]="village.value">{{village.viewValue}}</mat-option>
+    <mat-form-field class="inputSelect">
+      <mat-select class="newFont" placeholder="Village" [(ngModel)]="selectedVillage" (selectionChange)="showWeatherData()" [disabled]="!selectedCountry || !selectedState || !selectedDistrict || !selectedBlock || !selectedPanchayat">
+        <mat-option class="newFont">None</mat-option>
+        <mat-option class="newFont" *ngFor="let village of villages" [value]="village.id">{{village.viewValue}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-icon-button *ngIf="selectedVillage" color="accent" (click)="deleteRecord('Village')">
-      <mat-icon aria-label="Example icon-button with a delete icon">delete</mat-icon>
-    </button>
-    <button mat-button *ngIf="selectedPanchayat && !selectedVillage" color="accent" (click)="openBottomSheet('Village')">New</button>
-  </div>
+  </mat-card>
 
-  <!-- <p> Selected Country: {{selectedCountry}} </p>
-  <p> Selected State: {{selectedState}} </p>
-  <p> Selected District: {{selectedDistrict}} </p>
-  <p> Selected Block: {{selectedBlock}} </p>
-  <p> Selected Panchayat: {{selectedPanchayat}} </p>
-  <p> Selected Village: {{selectedVillage}} </p> -->
-</mat-card>
+  <div class="header" style="margin-bottom: 12px" *ngIf="selectedVillage && todayWeather">
+    <mat-card class="header-top" style="font-family: 'Montserrat', sans-serif !important;">
+      <div style="float:left;">
+        <p *ngIf="todayWeather.weatherDate" style="text-align: left;color: #8c8b8b; margin-bottom: 4px;">{{todayWeather.weatherDate | date:'EEEE'}}, {{todayWeather.weatherDate | date:'MMMM dd'}}</p>
+        <h2 *ngIf="todayWeather.status">{{todayWeather.status}}</h2>
+      </div>
+      <div *ngIf="todayWeather.condition" style="float:right;">
+        <img style="max-width: 100px; margin-top: -20px;" src="{{todayWeather.conditionImageUrl}}" alt="{{todayWeather.condition}}"
+        />
+        <br/>
+        <ul>
+          <li *ngIf="todayWeather.condition">
+            <p class="cen">{{todayWeather.condition}}</p>
+          </li>
+          <li *ngIf="todayWeather.rainfall">
+            <p>
+              <img class="whe" style="max-width: 100%;" src="assets/img/rainfall.svg" alt="Rainfall" /> {{todayWeather.rainfall}} mm
+            </p>
+          </li>
+        </ul>
+      </div>
+      <div class="clear"> </div>
+    </mat-card>
+    <mat-card class="header-bottom" style="font-family: 'Montserrat', sans-serif !important; padding: 0;">
+      <mat-card *ngFor="let weather of forecastWeather" class="header-bottom1 {{weather.position%2==0? 'header-bottom2' : ''}}">
+        <div class="header-head">
+          <div *ngIf="weather.weatherDate" class="bottom-head">
+            <p>{{weather.weatherDate | date:'MMMM dd'}}</p>
+            <p>{{weather.weatherDate | date:'EEEE'}}</p>
+          </div>
+          <img *ngIf="weather.condition" src="{{weather.conditionImageUrl}}" alt="{{weather.condition}}" />
+          <h4 *ngIf="weather.condition" style="margin-top: -8px;">{{weather.condition}}</h4>
+          <p *ngIf="weather.rainfall" style="font-weight: 1000; margin-top: 16px;">
+            <img class="whe" style="max-width: 100%; margin: 0 auto;" src="assets/img/rainfall.svg" alt="Rainfall" /> {{weather.rainfall}} mm
+          </p>
+          <p *ngIf="weather.status" style="margin-top: 12px;">{{weather.status}}</p>
+        </div>
+      </mat-card>
+      <div class="clear"> </div>
+    </mat-card>
+  </div>
+</div>

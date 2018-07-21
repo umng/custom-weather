@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "deploy": "ng build --prod --base-href \"https://umng.github.io/custom-weather/\" && ngh --no-silent --dir dist/custom-weather"
+    "deploy": "ng build --prod --base-href \"https://rnsnforecast.com/\" && ngh --no-silent --dir dist/custom-weather"
   },
   "private": true,
   "dependencies": {

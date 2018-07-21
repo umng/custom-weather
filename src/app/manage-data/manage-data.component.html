@@ -1,0 +1,205 @@
+<mat-toolbar color="primary">
+  <span>Manage Data</span>
+</mat-toolbar>
+
+<mat-spinner *ngIf="isLoading" style="margin: 0 auto;" [diameter]=40></mat-spinner>
+
+<mat-card *ngIf="!isLoading">
+  <!-- Country -->
+  <div>
+    <mat-form-field>
+      <mat-select placeholder="Country" [(ngModel)]="selectedCountry" (selectionChange)="loadRecords('State')">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let country of countries" [value]="country.value">{{country.viewValue}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-icon-button *ngIf="selectedCountry" color="accent" (click)="deleteRecord('Country', selectedCountry)">
+      <mat-icon aria-label="delete">delete</mat-icon>
+    </button>
+    <button mat-button *ngIf="!selectedCountry" color="accent" (click)="openBottomSheet('Country')">New</button>
+  </div>
+
+  <!-- State -->
+  <div>
+    <mat-form-field>
+      <mat-select placeholder="State" [(ngModel)]="selectedState" (selectionChange)="loadRecords('District')" [disabled]="!selectedCountry">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let state of states" [value]="state.value">{{state.viewValue}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-icon-button *ngIf="selectedState" color="accent" (click)="deleteRecord('State', selectedState)">
+      <mat-icon aria-label="delete">delete</mat-icon>
+    </button>
+    <button mat-button *ngIf="selectedCountry && !selectedState" color="accent" (click)="openBottomSheet('State')">New</button>
+  </div>
+
+  <!-- District -->
+  <div>
+    <mat-form-field>
+      <mat-select placeholder="District" [(ngModel)]="selectedDistrict" (selectionChange)="loadRecords('Block')" [disabled]="!selectedCountry || !selectedState">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let district of districts" [value]="district.value">{{district.viewValue}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-icon-button *ngIf="selectedDistrict" color="accent" (click)="deleteRecord('District', selectedDistrict)">
+      <mat-icon aria-label="delete">delete</mat-icon>
+    </button>
+    <button mat-button *ngIf="selectedState && !selectedDistrict" color="accent" (click)="openBottomSheet('District')">New</button>
+  </div>
+
+  <!-- Block -->
+  <div>
+    <mat-form-field>
+      <mat-select placeholder="Block" [(ngModel)]="selectedBlock" (selectionChange)="loadRecords('Panchayat')" [disabled]="!selectedCountry || !selectedState || !selectedDistrict">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let block of blocks" [value]="block.value">{{block.viewValue}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-icon-button *ngIf="selectedBlock" color="accent" (click)="deleteRecord('Block', selectedBlock)">
+      <mat-icon aria-label="delete">delete</mat-icon>
+    </button>
+    <button mat-button *ngIf="selectedDistrict && !selectedBlock" color="accent" (click)="openBottomSheet('Block')">New</button>
+  </div>
+
+  <!-- Panchayat -->
+  <div>
+    <mat-form-field>
+      <mat-select placeholder="Panchayat" [(ngModel)]="selectedPanchayat" (selectionChange)="loadRecords('Village')" [disabled]="!selectedCountry || !selectedState || !selectedDistrict || !selectedBlock">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let panchayat of panchayats" [value]="panchayat.value">{{panchayat.viewValue}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-icon-button *ngIf="selectedPanchayat" color="accent" (click)="deleteRecord('Panchayat', selectedPanchayat)">
+      <mat-icon aria-label="delete">delete</mat-icon>
+    </button>
+    <button mat-button *ngIf="selectedBlock && !selectedPanchayat" color="accent" (click)="openBottomSheet('Panchayat')">New</button>
+  </div>
+
+  <!-- Village -->
+  <div>
+    <mat-form-field>
+      <mat-select placeholder="Village" [(ngModel)]="selectedVillage" [disabled]="!selectedCountry || !selectedState || !selectedDistrict || !selectedBlock || !selectedPanchayat">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let village of villages" [value]="village.id">{{village.viewValue}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-icon-button *ngIf="selectedVillage" color="accent" (click)="deleteRecord('Village', selectedVillage)">
+      <mat-icon aria-label="delete">delete</mat-icon>
+    </button>
+    <button mat-button *ngIf="selectedPanchayat && !selectedVillage" color="accent" (click)="openBottomSheet('Village')">New</button>
+  </div>
+
+  <!-- Weather Data -->
+  <mat-card *ngIf="selectedVillage" style="width: 80%;margin: 0 auto;">
+    <div>
+      <mat-form-field style="width:40%;">
+        <textarea matInput placeholder="Weather Status" [formControl]="weatherStatusControl"></textarea>
+        <mat-error *ngIf="weatherStatusControl.hasError('required')">
+          Weather Status is
+          <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field>
+        <input matInput [matDatepicker]="picker" placeholder="select a date" [formControl]="weatherDateControl">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker disabled="false"></mat-datepicker>
+        <mat-error *ngIf="weatherDateControl.hasError('required')">
+          Date is
+          <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field>
+        <input type="number" matInput placeholder="Rainfall" min="0" max="1000" [formControl]="weatherRainfallControl">
+        <span matSuffix>&nbsp; mm</span>
+        <mat-error *ngIf="weatherRainfallControl.hasError('required')">
+          Rainfall is
+          <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="weatherRainfallControl.value">
+          Rainfall can be from
+          <strong>0 - 1000</strong>
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field>
+        <mat-select placeholder="Weather Condition" [formControl]="weatherConditionControl">
+          <mat-option>None</mat-option>
+          <mat-option *ngFor="let condition of weatherConditions" [value]="condition.value">{{condition.viewValue}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-error *ngIf="weatherConditionControl.hasError('required')">
+        Weather Condition is
+        <strong>required</strong>
+      </mat-error>
+    </div>
+
+    <button mat-raised-button style="margin-top: 12px;" color="primary" (click)="addWeatherStatus()">Add</button>
+
+    <div style="margin-top: 24px;">
+      <button mat-button color="accent" (click)="showWeatherStatusHistory()">Show Status History</button>
+    </div>
+
+    <div *ngIf="weatherStatusData" style="text-align: -webkit-center;">
+      <table mat-table [dataSource]="weatherStatusData" class="mat-elevation-z8" style="min-width: 720px;width: 80%; text-align: left;">
+
+        <!--- Note that these columns can be defined in any order.
+                    The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- position Column -->
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef> No. </th>
+          <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+        </ng-container>
+
+        <!-- weatherDate Column -->
+        <ng-container matColumnDef="weatherDate">
+          <th mat-header-cell *matHeaderCellDef> Weather Date </th>
+          <td mat-cell *matCellDef="let element"> {{element.weatherDate | date}} </td>
+        </ng-container>
+
+        <!-- rainfall Column -->
+        <ng-container matColumnDef="rainfall">
+          <th mat-header-cell *matHeaderCellDef> Rainfall </th>
+          <td mat-cell *matCellDef="let element"> {{element.rainfall}} mm</td>
+        </ng-container>
+
+        <!-- status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+        </ng-container>
+
+        <!-- condition Column -->
+        <ng-container matColumnDef="condition">
+          <th mat-header-cell *matHeaderCellDef> Condition </th>
+          <td mat-cell *matCellDef="let element"> {{element.condition}} </td>
+        </ng-container>
+
+        <!-- createdDate Column -->
+        <ng-container matColumnDef="createdDate">
+          <th mat-header-cell *matHeaderCellDef> Created Date Time </th>
+          <td mat-cell *matCellDef="let element"> {{element.createdDate | date:'dd MMM yyyy, hh:mm a'}} </td>
+        </ng-container>
+
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef> Action </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button *ngIf="selectedVillage" color="accent" (click)="deleteRecord('Weather', element.id)">
+              <mat-icon aria-label="delete">delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="weatherStatusColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: weatherStatusColumns;"></tr>
+      </table>
+    </div>
+  </mat-card>
+</mat-card>

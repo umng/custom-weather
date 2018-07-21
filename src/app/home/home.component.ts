@@ -1,31 +1,24 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatBottomSheet, MatBottomSheetRef, MatSnackBar } from '@angular/material';
 import { ParseService } from '../parse.service';
-import { DataService } from '../data.service';
 
 let Parse;
 
-let newType;
-
-let country;
-let state;
-let district;
-let block;
-let panchayat;
-let village;
-
-
-let countriesList;
-let statesList;
-let districtsList;
-let blocksList;
-let panchayatsList;
-let villagesList;
-
 export interface Select {
+  id: string;
   value: string;
   viewValue: string;
+}
+export interface WeatherData {
+  id: string;
+  position: number;
+  weatherDate: Date;
+  rainfall: number;
+  status: string;
+  condition: string;
+  conditionImageUrl: string;
+  createdDate: Date;
 }
 
 @Component({
@@ -33,7 +26,9 @@ export interface Select {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
+
 export class HomeComponent implements OnInit {
+  @ViewChild('content') content: ElementRef;
 
   isLoading = false;
 
@@ -43,84 +38,27 @@ export class HomeComponent implements OnInit {
   selectedBlock: string;
   selectedPanchayat: string;
   selectedVillage: string;
+  todayWeather: WeatherData;
+  forecastWeather: WeatherData[];
+  conditonImageUrlMap = new Map<string, string>();
 
   countries: Select[];
   states: Select[];
   districts: Select[];
   blocks: Select[];
-  panchayats: Select[];
+  panchayats: Select[] = [];
   villages: Select[];
 
-  constructor(private bottomSheet: MatBottomSheet, private parseService: ParseService,
-     public snackBar: MatSnackBar, private dataService: DataService) {
+  constructor(private parseService: ParseService, public snackBar: MatSnackBar) {
     Parse = parseService.Parse;
   }
 
   ngOnInit() {
-    this.dataService.change.subscribe(className => {
-      this.loadRecords(className);
-    });
     this.loadRecords('Country');
-  }
-
-  openBottomSheet(className): void {
-    newType = className;
-    country = this.selectedCountry;
-    state = this.selectedState;
-    district = this.selectedDistrict;
-    block = this.selectedBlock;
-    panchayat = this.selectedPanchayat;
-    village = this.selectedVillage;
-
-    countriesList = this.countries;
-    statesList = this.states;
-    districtsList = this.districts;
-    blocksList = this.blocks;
-    panchayatsList = this.panchayats;
-    villagesList = this.villages;
-
-    this.bottomSheet.open(NewComponent);
-  }
-
-  deleteRecord(className): void {
-    const $scope = this;
-
-    const classObject = Parse.Object.extend(className);
-    const recordsQuery = new Parse.Query(classObject);
-    if (className === 'Country') {
-      recordsQuery.equalTo('name', this.selectedCountry);
-    } else if (className === 'State') {
-      recordsQuery.equalTo('name', this.selectedState);
-    } else if (className === 'District') {
-      recordsQuery.equalTo('name', this.selectedDistrict);
-    } else if (className === 'Block') {
-      recordsQuery.equalTo('name', this.selectedBlock);
-    } else if (className === 'Panchayat') {
-      recordsQuery.equalTo('name', this.selectedPanchayat);
-    } else if (className === 'Village') {
-      recordsQuery.equalTo('name', this.selectedVillage);
-    }
-    recordsQuery.limit(1);
-    this.isLoading = true;
-    recordsQuery.find({
-      success: function(results) {
-        results[0].destroy({
-          success: function(myObject) {
-            $scope.isLoading = false;
-            $scope.loadRecords(className);
-            $scope.openSnackBar(className + ' Deleted.', '');
-          },
-          error: function(myObject, error) {
-            $scope.isLoading = false;
-            $scope.openSnackBar('Failed to delete ' + className + ', with error- ' + error.code + ' : ' + error.message, '');
-          }
-        });
-      },
-      error: function(error) {
-        $scope.isLoading = false;
-        $scope.openSnackBar('Failed to delete ' + className + ', with error- ' + error.code + ' : ' + error.message, '');
-      }
-    });
+    const imgUrlPrefix = 'assets/img/';
+    this.conditonImageUrlMap.set('Cloudy', imgUrlPrefix + 'cloudy.png');
+    this.conditonImageUrlMap.set('Sunny', imgUrlPrefix + 'sunny.png');
+    this.conditonImageUrlMap.set('Rain', imgUrlPrefix + 'rain.png');
   }
 
   loadRecords(className): void {
@@ -176,10 +114,6 @@ export class HomeComponent implements OnInit {
 
     const $scope = this;
 
-    const ClassObjectSelected = Parse.Object.extend(classNameSelected);
-    const classObjectSelected = new ClassObjectSelected();
-    classObjectSelected.id = this.selectedCountry;
-
     const classObject = Parse.Object.extend(className);
     const recordsQuery = new Parse.Query(classObject);
     if (className === 'State') {
@@ -200,6 +134,7 @@ export class HomeComponent implements OnInit {
         const records = [];
         for (let i = 0; i < results.length; i++) {
           records.push({
+            id: results[i].id,
             value: results[i].get('name'),
             viewValue: results[i].get('name')
           });
@@ -207,7 +142,7 @@ export class HomeComponent implements OnInit {
         $scope.setRecords(className, records);
       },
       error: function(error) {
-        this.isLoading = false;
+        $scope.isLoading = false;
         $scope.openSnackBar('Failed to get ' + className + ' records, with error- ' + error.code + ' : ' + error.message, '');
       }
     });
@@ -231,79 +166,68 @@ export class HomeComponent implements OnInit {
     this.isLoading = false;
   }
 
-  getClassObject(className, objectId): void {
-    const ClassObject = Parse.Object.extend(className);
-    const classObject = new ClassObject();
-    classObject.id = objectId;
-    return classObject;
-  }
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 4000,
-    });
-  }
-}
-
-
-@Component({
-  selector: 'app-new',
-  templateUrl: 'new.html',
-})
-export class NewComponent implements OnInit {
-
-  formControl = new FormControl('', [
-    Validators.required
-  ]);
-
-  className = newType;
-
-  constructor(private bottomSheetRef: MatBottomSheetRef<NewComponent>, private parseService: ParseService,
-    public snackBar: MatSnackBar, private dataService: DataService) {
-    Parse = parseService.Parse;
-  }
-
-  ngOnInit() {
-  }
-
-  saveNew(): void {
+  showWeatherData(): void {
     const $scope = this;
-    // event.preventDefault();
 
-    const NewObject = Parse.Object.extend(this.className);
-    const newObject = new NewObject();
-    if (this.formControl.value === '') {
-      this.openSnackBar(this.className + ' Name required.', '');
+    if (this.selectedVillage === undefined || this.selectedVillage === null || this.selectedVillage === '') {
       return;
     }
-    if (this.className === 'Country') {
-      if (this.isNameExists(countriesList, this.formControl.value)) { return; }
-    } else if (this.className === 'State') {
-      if (this.isNameExists(statesList, this.formControl.value)) { return; }
-      newObject.set('country', country);
-    } else if (this.className === 'District') {
-      if (this.isNameExists(districtsList, this.formControl.value)) { return; }
-      newObject.set('state', state);
-    } else if (this.className === 'Block') {
-      if (this.isNameExists(blocksList, this.formControl.value)) { return; }
-      newObject.set('district', district);
-    } else if (this.className === 'Panchayat') {
-      if (this.isNameExists(panchayatsList, this.formControl.value)) { return; }
-      newObject.set('block', block);
-    } else if (this.className === 'Village') {
-      if (this.isNameExists(villagesList, this.formControl.value)) { return; }
-      newObject.set('panchayat', panchayat);
-    }
-    newObject.set('name', this.formControl.value);
 
-    newObject.save(null, {
-      success: function (response) {
-        $scope.openSnackBar('New ' + $scope.className + ' saved.', '');
-        $scope.dataService.loadRecords($scope.className);
-        $scope.bottomSheetRef.dismiss();
+    $scope.todayWeather = null;
+    $scope.forecastWeather = [];
+
+    const Weather = Parse.Object.extend('Weather');
+    const weatherQuery = new Parse.Query(Weather);
+    weatherQuery.equalTo('village', this.getClassObject('Village', this.selectedVillage));
+    const today = new Date();
+    weatherQuery.greaterThanOrEqualTo('weatherDate', new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+    weatherQuery.ascending('weatherDate');
+    weatherQuery.limit(5);
+
+    this.isLoading = true;
+    weatherQuery.find({
+      success: function(results) {
+        if (results !== undefined && results !== null && results.length !== 0) {
+          $scope.todayWeather = {
+            id: results[0].id,
+            position: 0,
+            weatherDate: results[0].get('weatherDate'),
+            rainfall: results[0].get('rainfall'),
+            status: results[0].get('status'),
+            condition: results[0].get('condition'),
+            conditionImageUrl: $scope.conditonImageUrlMap.get(results[0].get('condition')),
+            createdDate: results[0].get('createdAt')
+          };
+
+          for (let i = 1; i < results.length; i++) {
+            $scope.forecastWeather.push({
+              id: results[i].id,
+              position: i,
+              weatherDate: results[i].get('weatherDate'),
+              rainfall: results[i].get('rainfall'),
+              status: results[i].get('status'),
+              condition: results[i].get('condition'),
+              conditionImageUrl: $scope.conditonImageUrlMap.get(results[i].get('condition')),
+              createdDate: results[i].get('createdAt')
+            });
+          }
+        } else {
+          $scope.todayWeather = {
+            id: null,
+            position: null,
+            weatherDate: null,
+            rainfall: null,
+            status: 'No Weather Data available.',
+            condition: null,
+            conditionImageUrl: null,
+            createdDate: null
+          };
+        }
+        $scope.isLoading = false;
       },
-      error: function (response, error) {
-        $scope.openSnackBar('Failed to create new object, with error- ' + error.code + ' : ' + error.message, '');
+      error: function(error) {
+        $scope.isLoading = false;
+        $scope.openSnackBar('Failed to get Weather Status History records, with error- ' + error.code + ' : ' + error.message, '');
       }
     });
   }
@@ -313,16 +237,6 @@ export class NewComponent implements OnInit {
     const classObject = new ClassObject();
     classObject.id = objectId;
     return classObject;
-  }
-
-  isNameExists(objectList, name): boolean {
-    for (const i in objectList) {
-      if (objectList[i].value === name) {
-        this.openSnackBar(this.className + ' Name already exists.', '');
-        return true;
-      }
-    }
-    return false;
   }
 
   openSnackBar(message: string, action: string) {
