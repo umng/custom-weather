@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter, ElementRef, ViewChild } from '
 import { FormControl, Validators } from '@angular/forms';
 import { MatBottomSheet, MatBottomSheetRef, MatSnackBar } from '@angular/material';
 import { ParseService } from '../parse.service';
+import { HttpClient } from '@angular/common/http';
 
 let Parse;
 
@@ -19,6 +20,11 @@ export interface WeatherData {
   condition: string;
   conditionImageUrl: string;
   createdDate: Date;
+}
+
+export interface WeatherAPI {
+  temp: number;
+  humidity: number;
 }
 
 @Component({
@@ -41,6 +47,7 @@ export class HomeComponent implements OnInit {
   todayWeather: WeatherData;
   forecastWeather: WeatherData[];
   conditonImageUrlMap = new Map<string, string>();
+  weatherAPI: WeatherAPI;
 
   countries: Select[];
   states: Select[];
@@ -49,7 +56,7 @@ export class HomeComponent implements OnInit {
   panchayats: Select[] = [];
   villages: Select[];
 
-  constructor(private parseService: ParseService, public snackBar: MatSnackBar) {
+  constructor(private parseService: ParseService, public snackBar: MatSnackBar, private http: HttpClient) {
     Parse = parseService.Parse;
   }
 
@@ -230,6 +237,31 @@ export class HomeComponent implements OnInit {
         $scope.openSnackBar('Failed to get Weather Status History records, with error- ' + error.code + ' : ' + error.message, '');
       }
     });
+    $scope.weatherAPI = null;
+    const apiQuery = 'https://query.yahooapis.com/v1/public/yql?q='
+    + 'select item.condition, atmosphere.humidity from weather.forecast where woeid in '
+    + '(select woeid from geo.places(1) where text=\''
+    + this.getVillageName(this.selectedVillage) + ',' + this.selectedPanchayat + ',' + this.selectedBlock + ','
+    + this.selectedDistrict + ',' + this.selectedState + ',' + this.selectedCountry
+    + '\')&format=json&env=store://datatables.org/alltableswithkeys';
+    this.http.get(apiQuery).subscribe(data => {
+      const dataJSON = JSON.parse(JSON.stringify(data));
+      $scope.weatherAPI = {
+        temp: (Math.round((dataJSON.query.results.channel.item.condition.temp - 32) * (5 / 9))),
+        humidity: dataJSON.query.results.channel.atmosphere.humidity
+      };
+    },
+    err => {
+      console.log('Weather Yahoo API: Error occured.');
+    });
+  }
+
+  getVillageName(objectId: string): string {
+    for (const i in this.villages) {
+      if (this.villages[i].id === objectId) {
+        return this.villages[i].viewValue;
+      }
+    }
   }
 
   getClassObject(className, objectId): void {

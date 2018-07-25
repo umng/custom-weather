@@ -17,6 +17,7 @@ import { HomeComponent } from './home/home.component';
 import { ParseService } from './parse.service';
 import { ManageDataComponent, NewComponent } from './manage-data/manage-data.component';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { LocationStrategy, PathLocationStrategy } from '@angular/common';
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     MatProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
