@@ -34,6 +34,7 @@ export interface WeatherData {
   position: number;
   weatherDate: Date;
   rainfall: number;
+  rainfallPercentage: number;
   status: string;
   condition: string;
   createdDate: Date;
@@ -74,11 +75,17 @@ export class ManageDataComponent implements OnInit {
     Validators.min(0),
     Validators.max(1000)
   ]);
+  weatherRainfallPercentageControl = new FormControl('', [
+    Validators.required,
+    Validators.min(0),
+    Validators.max(100)
+  ]);
   weatherConditionControl = new FormControl('', [
     Validators.required
   ]);
 
-  weatherStatusColumns: string[] = ['position', 'weatherDate', 'rainfall', 'status', 'condition', 'createdDate', 'action'];
+  weatherStatusColumns: string[] = ['position', 'weatherDate', 'rainfall', 'rainfallPercentage',
+   'status', 'condition', 'createdDate', 'action'];
   weatherStatusData: WeatherData[];
 
   constructor(private bottomSheet: MatBottomSheet, private parseService: ParseService,
@@ -277,8 +284,15 @@ export class ManageDataComponent implements OnInit {
     if (this.weatherStatusControl.value === null || this.weatherStatusControl.value === ''
     || this.weatherDateControl.value === null || this.weatherDateControl.value === ''
     || this.weatherRainfallControl.value === null || this.weatherRainfallControl.value === ''
+    || this.weatherRainfallPercentageControl.value === null || this.weatherRainfallPercentageControl.value === ''
     || this.weatherConditionControl.value === null || this.weatherConditionControl.value === '') {
       this.openSnackBar('Please fill up all required fields.', '');
+      return;
+    }
+
+    if (this.weatherRainfallControl.value < 0 || this.weatherRainfallControl.value > 1000
+    || this.weatherRainfallPercentageControl.value < 0 || this.weatherRainfallPercentageControl.value > 100) {
+      this.openSnackBar('Please enter valid values.', '');
       return;
     }
 
@@ -287,6 +301,7 @@ export class ManageDataComponent implements OnInit {
     weather.set('status', this.weatherStatusControl.value);
     weather.set('weatherDate', this.weatherDateControl.value);
     weather.set('rainfall', this.weatherRainfallControl.value);
+    weather.set('rainfallPercentage', this.weatherRainfallPercentageControl.value);
     weather.set('condition', this.weatherConditionControl.value);
     weather.set('village', this.getClassObject('Village', this.selectedVillage));
     weather.save(null, {
@@ -294,6 +309,7 @@ export class ManageDataComponent implements OnInit {
         $scope.weatherStatusControl.setValue('');
         $scope.weatherDateControl.setValue('');
         $scope.weatherRainfallControl.setValue('');
+        $scope.weatherRainfallPercentageControl.setValue('');
         $scope.weatherConditionControl.setValue('');
         $scope.openSnackBar('Weather Status added.', '');
         $scope.showWeatherStatusHistory();
@@ -322,6 +338,7 @@ export class ManageDataComponent implements OnInit {
             position: i + 1,
             weatherDate: results[i].get('weatherDate'),
             rainfall: results[i].get('rainfall'),
+            rainfallPercentage: results[i].get('rainfallPercentage'),
             status: results[i].get('status'),
             condition: results[i].get('condition'),
             createdDate: results[i].get('createdAt'),

@@ -16,6 +16,7 @@ export interface WeatherData {
   position: number;
   weatherDate: Date;
   rainfall: number;
+  rainfallPercentage: number;
   status: string;
   condition: string;
   conditionImageUrl: string;
@@ -200,6 +201,7 @@ export class HomeComponent implements OnInit {
             position: 0,
             weatherDate: results[0].get('weatherDate'),
             rainfall: results[0].get('rainfall'),
+            rainfallPercentage: results[0].get('rainfallPercentage'),
             status: results[0].get('status'),
             condition: results[0].get('condition'),
             conditionImageUrl: $scope.conditonImageUrlMap.get(results[0].get('condition')),
@@ -212,6 +214,7 @@ export class HomeComponent implements OnInit {
               position: i,
               weatherDate: results[i].get('weatherDate'),
               rainfall: results[i].get('rainfall'),
+              rainfallPercentage: results[i].get('rainfallPercentage'),
               status: results[i].get('status'),
               condition: results[i].get('condition'),
               conditionImageUrl: $scope.conditonImageUrlMap.get(results[i].get('condition')),
@@ -224,6 +227,7 @@ export class HomeComponent implements OnInit {
             position: null,
             weatherDate: null,
             rainfall: null,
+            rainfallPercentage: null,
             status: 'No Weather Data available.',
             condition: null,
             conditionImageUrl: null,

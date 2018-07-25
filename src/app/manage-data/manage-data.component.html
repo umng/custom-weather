@@ -124,6 +124,18 @@
           <strong>0 - 1000</strong>
         </mat-error>
       </mat-form-field>
+      <mat-form-field>
+        <input type="number" matInput placeholder="Percentage" min="0" max="1000" [formControl]="weatherRainfallPercentageControl">
+        <span matSuffix>&nbsp; %</span>
+        <mat-error *ngIf="weatherRainfallPercentageControl.hasError('required')">
+          Percentage is
+          <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="weatherRainfallPercentageControl.value">
+          Percentage can be from
+          <strong>0 - 100</strong>
+        </mat-error>
+      </mat-form-field>
     </div>
     <div>
       <mat-form-field>
@@ -166,6 +178,12 @@
         <ng-container matColumnDef="rainfall">
           <th mat-header-cell *matHeaderCellDef> Rainfall </th>
           <td mat-cell *matCellDef="let element"> {{element.rainfall}} mm</td>
+        </ng-container>
+
+        <!-- rainfallPercentage Column -->
+        <ng-container matColumnDef="rainfallPercentage">
+          <th mat-header-cell *matHeaderCellDef> Percentage </th>
+          <td mat-cell *matCellDef="let element"> {{element.rainfallPercentage}} %</td>
         </ng-container>
 
         <!-- status Column -->

@@ -60,7 +60,7 @@
         <div style="margin-top: 4px;">
           <h2 style="font-weight: 1000;" *ngIf="weatherAPI && weatherAPI.temp">{{weatherAPI.temp}}° C</h2>
           <p style="text-align: right;color: #8c8b8b; font-size: 18px;" *ngIf="weatherAPI && weatherAPI.humidity">
-            <img style="vertical-align: bottom;" src="assets/img/humidity.svg" alt="Humidity" /> <b>{{weatherAPI.humidity}} %</b>
+            <img style="vertical-align: bottom;" src="assets/img/humidity.svg" alt="Humidity" /> <b>{{weatherAPI.humidity}}%</b>
           </p>
         </div>
         <br/>
@@ -70,7 +70,7 @@
           </li>
           <li *ngIf="todayWeather.rainfall">
             <p>
-              <img style="vertical-align: bottom;" src="assets/img/rainfall.svg" alt="Rainfall" /> {{todayWeather.rainfall}} mm (%)
+              <img style="vertical-align: bottom;" src="assets/img/rainfall.svg" alt="Rainfall" /> {{todayWeather.rainfall}} mm ({{todayWeather.rainfallPercentage}}%)
             </p>
           </li>
         </ul>
@@ -89,6 +89,7 @@
           <p *ngIf="weather.rainfall" style="font-weight: 1000; margin-top: 16px;">
             <img style="max-width: 100%; margin: 0 auto;" src="assets/img/rainfall.svg" alt="Rainfall" /> {{weather.rainfall}} mm
           </p>
+          <p *ngIf="weather.rainfallPercentage">({{weather.rainfallPercentage}}%)</p>
           <p *ngIf="weather.status" style="margin-top: 12px;">{{weather.status}}</p>
         </div>
       </mat-card>
