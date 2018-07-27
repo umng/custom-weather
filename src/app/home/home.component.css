@@ -352,3 +352,7 @@ h1 {
 .newFont {
   font-family: "Montserrat", sans-serif !important;
 }
+
+b {
+  font-weight: 600 !important;
+}

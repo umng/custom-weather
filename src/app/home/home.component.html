@@ -1,99 +1,169 @@
 <div class="homeBody">
-  <!--div>
-    <button mat-raised-button routerLink="/manage-data">Manage Data</button>
-  </div-->
-  <h1>rnsnforecast.com</h1>
+  <div style="text-align: left; margin: 8px;">
+    <img style="width: 80px;" src="assets/img/rnsnpg.jpg" alt="rnsnforecast.com" />
+    <h1 style="display: inline-block; margin: 0 auto; margin-left: 12px; vertical-align: top;">rnsnforecast.com</h1>
+  </div>
+  <mat-tab-group>
+    <mat-tab label="Home">
+      <mat-spinner *ngIf="isLoading" style="margin: 0 auto; margin-bottom: 12px;" [diameter]=40></mat-spinner>
+      <mat-card style="width: 80%;max-width: 860px; margin: 0 auto; margin-top: 12px; margin-bottom: 8px;">
+        <mat-form-field class="inputSelect">
+          <mat-select class="newFont" placeholder="Country" [(ngModel)]="selectedCountry" (selectionChange)="loadRecords('State')">
+            <mat-option class="newFont">None</mat-option>
+            <mat-option class="newFont" *ngFor="let country of countries" [value]="country.value">{{country.viewValue}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="inputSelect">
+          <mat-select class="newFont" placeholder="State" [(ngModel)]="selectedState" (selectionChange)="loadRecords('District')" [disabled]="!selectedCountry">
+            <mat-option class="newFont">None</mat-option>
+            <mat-option class="newFont" *ngFor="let state of states" [value]="state.value">{{state.viewValue}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="inputSelect">
+          <mat-select class="newFont" placeholder="District" [(ngModel)]="selectedDistrict" (selectionChange)="loadRecords('Block')"
+            [disabled]="!selectedCountry || !selectedState">
+            <mat-option class="newFont">None</mat-option>
+            <mat-option class="newFont" *ngFor="let district of districts" [value]="district.value">{{district.viewValue}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="inputSelect">
+          <mat-select class="newFont" placeholder="Block" [(ngModel)]="selectedBlock" (selectionChange)="loadRecords('Panchayat')"
+            [disabled]="!selectedCountry || !selectedState || !selectedDistrict">
+            <mat-option class="newFont">None</mat-option>
+            <mat-option class="newFont" *ngFor="let block of blocks" [value]="block.value">{{block.viewValue}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="inputSelect">
+          <mat-select class="newFont" placeholder="Panchayat" [(ngModel)]="selectedPanchayat" (selectionChange)="loadRecords('Village')"
+            [disabled]="!selectedCountry || !selectedState || !selectedDistrict || !selectedBlock">
+            <mat-option class="newFont">None</mat-option>
+            <mat-option class="newFont" *ngFor="let panchayat of panchayats" [value]="panchayat.value">{{panchayat.viewValue}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="inputSelect">
+          <mat-select class="newFont" placeholder="Village" [(ngModel)]="selectedVillage" (selectionChange)="showWeatherData()" [disabled]="!selectedCountry || !selectedState || !selectedDistrict || !selectedBlock || !selectedPanchayat">
+            <mat-option class="newFont">None</mat-option>
+            <mat-option class="newFont" *ngFor="let village of villages" [value]="village.id">{{village.viewValue}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-card>
 
-  <mat-spinner *ngIf="isLoading" style="margin: 0 auto; margin-bottom: 12px;" [diameter]=40></mat-spinner>
-
-  <mat-card style="width: 80%;max-width: 860px; margin: 0 auto; margin-bottom: 8px;">
-    <mat-form-field class="inputSelect">
-      <mat-select class="newFont" placeholder="Country" [(ngModel)]="selectedCountry" (selectionChange)="loadRecords('State')">
-        <mat-option class="newFont">None</mat-option>
-        <mat-option class="newFont" *ngFor="let country of countries" [value]="country.value">{{country.viewValue}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="inputSelect">
-      <mat-select class="newFont" placeholder="State" [(ngModel)]="selectedState" (selectionChange)="loadRecords('District')" [disabled]="!selectedCountry">
-        <mat-option class="newFont">None</mat-option>
-        <mat-option class="newFont" *ngFor="let state of states" [value]="state.value">{{state.viewValue}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="inputSelect">
-      <mat-select class="newFont" placeholder="District" [(ngModel)]="selectedDistrict" (selectionChange)="loadRecords('Block')"
-        [disabled]="!selectedCountry || !selectedState">
-        <mat-option class="newFont">None</mat-option>
-        <mat-option class="newFont" *ngFor="let district of districts" [value]="district.value">{{district.viewValue}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="inputSelect">
-      <mat-select class="newFont" placeholder="Block" [(ngModel)]="selectedBlock" (selectionChange)="loadRecords('Panchayat')"
-        [disabled]="!selectedCountry || !selectedState || !selectedDistrict">
-        <mat-option class="newFont">None</mat-option>
-        <mat-option class="newFont" *ngFor="let block of blocks" [value]="block.value">{{block.viewValue}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="inputSelect">
-      <mat-select class="newFont" placeholder="Panchayat" [(ngModel)]="selectedPanchayat" (selectionChange)="loadRecords('Village')"
-        [disabled]="!selectedCountry || !selectedState || !selectedDistrict || !selectedBlock">
-        <mat-option class="newFont">None</mat-option>
-        <mat-option class="newFont" *ngFor="let panchayat of panchayats" [value]="panchayat.value">{{panchayat.viewValue}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="inputSelect">
-      <mat-select class="newFont" placeholder="Village" [(ngModel)]="selectedVillage" (selectionChange)="showWeatherData()" [disabled]="!selectedCountry || !selectedState || !selectedDistrict || !selectedBlock || !selectedPanchayat">
-        <mat-option class="newFont">None</mat-option>
-        <mat-option class="newFont" *ngFor="let village of villages" [value]="village.id">{{village.viewValue}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </mat-card>
-
-  <div class="header" style="margin-bottom: 12px" *ngIf="selectedVillage && todayWeather">
-    <mat-card class="header-top" style="font-family: 'Montserrat', sans-serif !important;">
-      <div style="float:left;">
-        <p *ngIf="todayWeather.weatherDate" style="text-align: left;color: #8c8b8b; margin-bottom: 4px;">{{todayWeather.weatherDate | date:'EEEE'}}, {{todayWeather.weatherDate | date:'MMMM dd'}}</p>
-        <h2 *ngIf="todayWeather.status">{{todayWeather.status}}</h2>
-      </div>
-      <div *ngIf="todayWeather.condition" style="float:right;">
-        <img style="max-width: 100px; margin-top: -20px;" src="{{todayWeather.conditionImageUrl}}" alt="{{todayWeather.condition}}" />
-        <br/>
-        <div style="margin-top: 4px;">
-          <h2 style="font-weight: 1000;" *ngIf="weatherAPI && weatherAPI.temp">{{weatherAPI.temp}}° C</h2>
-          <p style="text-align: right;color: #8c8b8b; font-size: 18px;" *ngIf="weatherAPI && weatherAPI.humidity">
-            <img style="vertical-align: bottom;" src="assets/img/humidity.svg" alt="Humidity" /> <b>{{weatherAPI.humidity}}%</b>
-          </p>
-        </div>
-        <br/>
-        <ul style="margin-top: -8px;">
-          <li *ngIf="todayWeather.condition">
-            <p class="cen">{{todayWeather.condition}}</p>
-          </li>
-          <li *ngIf="todayWeather.rainfall">
-            <p>
-              <img style="vertical-align: bottom;" src="assets/img/rainfall.svg" alt="Rainfall" /> {{todayWeather.rainfall}} mm ({{todayWeather.rainfallPercentage}}%)
-            </p>
-          </li>
-        </ul>
-      </div>
-      <div class="clear"> </div>
-    </mat-card>
-    <mat-card class="header-bottom" style="font-family: 'Montserrat', sans-serif !important; padding: 0;">
-      <mat-card *ngFor="let weather of forecastWeather" class="header-bottom1 {{weather.position%2==0? 'header-bottom2' : ''}}">
-        <div class="header-head">
-          <div *ngIf="weather.weatherDate" class="bottom-head">
-            <p>{{weather.weatherDate | date:'MMMM dd'}}</p>
-            <p>{{weather.weatherDate | date:'EEEE'}}</p>
+      <div class="header" style="margin-bottom: 12px" *ngIf="selectedVillage && todayWeather">
+        <mat-card class="header-top" style="font-family: 'Montserrat', sans-serif;">
+          <div style="float:left;">
+            <p *ngIf="todayWeather.weatherDate" style="text-align: left;color: #8c8b8b; margin-bottom: 4px;">{{todayWeather.weatherDate | date:'EEEE'}}, {{todayWeather.weatherDate | date:'MMMM dd'}}</p>
+            <h2 *ngIf="todayWeather.status">{{todayWeather.status}}</h2>
           </div>
-          <img *ngIf="weather.condition" src="{{weather.conditionImageUrl}}" alt="{{weather.condition}}" />
-          <h4 *ngIf="weather.condition" style="margin-top: -8px;">{{weather.condition}}</h4>
-          <p *ngIf="weather.rainfall" style="font-weight: 1000; margin-top: 16px;">
-            <img style="max-width: 100%; margin: 0 auto;" src="assets/img/rainfall.svg" alt="Rainfall" /> {{weather.rainfall}} mm
+          <div *ngIf="todayWeather.condition" style="float:right;">
+            <img style="max-width: 100px; margin-top: -20px;" src="{{todayWeather.conditionImageUrl}}" alt="{{todayWeather.condition}}"
+            />
+            <br/>
+            <div style="margin-top: 4px;">
+              <h2 style="font-weight: 1000;" *ngIf="weatherAPI && weatherAPI.temp">{{weatherAPI.temp}}° C</h2>
+              <p style="text-align: right;color: #8c8b8b; font-size: 18px;" *ngIf="weatherAPI && weatherAPI.humidity">
+                <img style="vertical-align: bottom;" src="assets/img/humidity.svg" alt="Humidity" />
+                <b>{{weatherAPI.humidity}}%</b>
+              </p>
+            </div>
+            <br/>
+            <ul style="margin-top: -8px;">
+              <li *ngIf="todayWeather.condition">
+                <p class="cen">{{todayWeather.condition}}</p>
+              </li>
+              <li *ngIf="todayWeather.rainfall">
+                <p>
+                  <img style="vertical-align: bottom;" src="assets/img/rainfall.svg" alt="Rainfall" /> {{todayWeather.rainfall}} mm ({{todayWeather.rainfallPercentage}}%)
+                </p>
+              </li>
+            </ul>
+          </div>
+          <div class="clear"> </div>
+        </mat-card>
+        <mat-card class="header-bottom" style="font-family: 'Montserrat', sans-serif; padding: 0;">
+          <mat-card *ngFor="let weather of forecastWeather" class="header-bottom1 {{weather.position%2==0? 'header-bottom2' : ''}}">
+            <div class="header-head">
+              <div *ngIf="weather.weatherDate" class="bottom-head">
+                <p>{{weather.weatherDate | date:'MMMM dd'}}</p>
+                <p>{{weather.weatherDate | date:'EEEE'}}</p>
+              </div>
+              <img *ngIf="weather.condition" src="{{weather.conditionImageUrl}}" alt="{{weather.condition}}" />
+              <h4 *ngIf="weather.condition" style="margin-top: -8px;">{{weather.condition}}</h4>
+              <p *ngIf="weather.rainfall" style="font-weight: 1000; margin-top: 16px;">
+                <img style="max-width: 100%; margin: 0 auto;" src="assets/img/rainfall.svg" alt="Rainfall" /> {{weather.rainfall}} mm
+              </p>
+              <p *ngIf="weather.rainfallPercentage">({{weather.rainfallPercentage}}%)</p>
+              <p *ngIf="weather.status" style="margin-top: 12px;">{{weather.status}}</p>
+            </div>
+          </mat-card>
+          <div class="clear"> </div>
+        </mat-card>
+      </div>
+    </mat-tab>
+    <mat-tab label="About">
+      <mat-card style="width: 80%;max-width: 860px; margin: 0 auto; margin-top: 12px; margin-bottom: 8px;">
+        <div style="text-align: left; font-family: 'Montserrat', sans-serif;">
+          <p>
+            <b>Rnsnforecast</b> is a website for weather forecasting mainly rainfall and snowfall.</p>
+          <br/>
+          <p>
+            <b>Rnsnforecast</b> provide service solutions for weather, agriculture and functions.Prevent losses due to Untimely
+            and off season rainfall and snowfall for any crops or event by weather prediction.</p>
+          <br/>
+          <p>We’re solving a huge problem that affects millions of people worldwide due to rain and snowfall.</p>
+          <br/>
+          <p>We are providing service at urban as well as rural level. Our specialty is only we can provide services till village
+            level.
           </p>
-          <p *ngIf="weather.rainfallPercentage">({{weather.rainfallPercentage}}%)</p>
-          <p *ngIf="weather.status" style="margin-top: 12px;">{{weather.status}}</p>
+          <br/>
+          <p>If someone need rain prediction service in their area for events or field crops please contact.</p>
+          <br/>
+          <p>"
+            <b>Please contact us, we are providing free service.</b>"</p>
+          <br/>
+          <br/>
+          <p>
+            <u>
+              <b>Leaderships:</b>
+            </u>
+          </p>
+          <br/>
+          <ul>
+            <li>
+              <b>Virendra Singh Sisodia : </b>Founder and Chairman
+            </li>
+            <br/>
+            <li>
+              <b>Avinash Gupta : </b>Chief Marketing Officer, General Manager Digital Media
+            </li>
+          </ul>
         </div>
       </mat-card>
-      <div class="clear"> </div>
-    </mat-card>
-  </div>
+    </mat-tab>
+    <mat-tab label="Contact Us">
+      <mat-card style="width: 80%;max-width: 860px; margin: 0 auto; margin-top: 12px; margin-bottom: 8px;">
+        <div style="text-align: left; font-family: 'Montserrat', sans-serif;">
+          <b>Email: </b><a href="mailto:vss.enjoy@gmail.com" target="_new">vss.enjoy@gmail.com</a>
+          <br/>
+          <br/>
+          <b>Follow Us on Facebook: </b><a href="https://www.facebook.com/technicalavinashji/" target="_new">Techno android apps</a>
+          <br/>
+          <br/>
+          <u><b>Download Apps from Play Store:</b></u>
+          <br/>
+          <ul style="list-style-type: circle; margin-left: 24px;">
+            <li>
+              <a href="https://play.google.com/store/apps/details?id=ml.umng.paranormaldetector" target="_new">REAL TIME Ghost detector with LAT- LONG</a>
+            </li>
+            <li>
+              <a href="https://play.google.com/store/apps/details?id=ml.umng.radiationeffect" target="_new">CELLULAR & EMF RADIATION DETECTOR WITH LAT- LONG</a>
+            </li>
+            <li>
+              <a href="https://play.google.com/store/apps/details?id=ml.umng.emfdetector" target="_new">Metal & EMF Detector free with lat-long</a>
+            </li>
+          </ul>
+        </div>
+      </mat-card>
+    </mat-tab>
+  </mat-tab-group>
+
 </div>

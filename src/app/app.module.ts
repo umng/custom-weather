@@ -8,7 +8,7 @@ import {
    MatProgressSpinnerModule, MatSelectModule,
   MatSnackBar, MatCardModule, MatToolbarModule, MatBottomSheetModule,
   MatSnackBarModule,
-  MatTableModule, MatDatepickerModule, MatNativeDateModule
+  MatTableModule, MatDatepickerModule, MatNativeDateModule, MatTabsModule, MatTabGroup
 } from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
@@ -46,6 +46,7 @@ import { HttpClientModule } from '@angular/common/http';
     MatTableModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatTabsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent },
       { path: 'manage-data', component: ManageDataComponent }
