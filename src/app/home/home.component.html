@@ -1,7 +1,7 @@
 <div class="homeBody">
   <div style="text-align: left; margin: 8px;">
-    <img style="width: 80px;" src="assets/img/rnsnpg.jpg" alt="rnsnforecast.com" />
-    <h1 style="display: inline-block; margin: 0 auto; margin-left: 12px; vertical-align: top;">rnsnforecast.com</h1>
+    <img style="width: 80px;" src="assets/img/rnsnpg.jpg" alt="Rnsnforecast" />
+    <h1 style="display: inline-block; margin: 0 auto; margin-left: 12px; vertical-align: top;">Rnsnforecast</h1>
   </div>
   <mat-tab-group>
     <mat-tab label="Home">
@@ -54,25 +54,31 @@
             <p *ngIf="todayWeather.weatherDate" style="text-align: left;color: #8c8b8b; margin-bottom: 4px;">{{todayWeather.weatherDate | date:'EEEE'}}, {{todayWeather.weatherDate | date:'MMMM dd'}}</p>
             <h2 *ngIf="todayWeather.status">{{todayWeather.status}}</h2>
           </div>
-          <div *ngIf="todayWeather.condition" style="float:right;">
-            <img style="max-width: 100px; margin-top: -20px;" src="{{todayWeather.conditionImageUrl}}" alt="{{todayWeather.condition}}"
-            />
-            <br/>
-            <div style="margin-top: 4px;">
-              <h2 style="font-weight: 1000;" *ngIf="weatherAPI && weatherAPI.temp">{{weatherAPI.temp}}° C</h2>
-              <p style="text-align: right;color: #8c8b8b; font-size: 18px;" *ngIf="weatherAPI && weatherAPI.humidity">
-                <img style="vertical-align: bottom;" src="assets/img/humidity.svg" alt="Humidity" />
-                <b>{{weatherAPI.humidity}}%</b>
-              </p>
+          <div style="float:right;">
+            <div *ngIf="todayWeather.condition" style="float:right; min-width: 140px;">
+              <img style="max-width: 100px; margin-top: -20px;" src="{{todayWeather.conditionImageUrl}}" alt="{{todayWeather.condition}}"
+              />
+              <br/>
+              <div style="margin-top: 4px; font-size: 12px;">
+                <b style="text-align: left; font-weight: 100 !important;">Temp.</b>
+                <b style="text-align: right; float: right; font-weight: 100 !important;">Humidity</b>
+              </div>
+              <div>
+                <h2 style="font-weight: 1000;" *ngIf="weatherAPI && weatherAPI.temp">{{weatherAPI.temp}}° C</h2>
+                <p style="text-align: right;color: #8c8b8b; font-size: 18px;" *ngIf="weatherAPI && weatherAPI.humidity">
+                  <img style="vertical-align: bottom;" src="assets/img/humidity.svg" alt="Humidity" />
+                  <b>{{weatherAPI.humidity}}%</b>
+                </p>
+              </div>
             </div>
             <br/>
-            <ul style="margin-top: -8px;">
+            <ul style="margin-top: -8px;" style="float:right;">
               <li *ngIf="todayWeather.condition">
                 <p class="cen">{{todayWeather.condition}}</p>
               </li>
-              <li *ngIf="todayWeather.rainfall">
+              <li *ngIf="todayWeather.rainfall != null && todayWeather.rainfall != undefined">
                 <p>
-                  <img style="vertical-align: bottom;" src="assets/img/rainfall.svg" alt="Rainfall" /> {{todayWeather.rainfall}} mm ({{todayWeather.rainfallPercentage}}%)
+                  <img style="vertical-align: bottom;" src="assets/img/rainfall.svg" alt="Rainfall" /> {{todayWeather.rainfall}} mm ({{todayWeather.rainfallPercentage}}% precipitation)
                 </p>
               </li>
             </ul>
@@ -88,7 +94,7 @@
               </div>
               <img *ngIf="weather.condition" src="{{weather.conditionImageUrl}}" alt="{{weather.condition}}" />
               <h4 *ngIf="weather.condition" style="margin-top: -8px;">{{weather.condition}}</h4>
-              <p *ngIf="weather.rainfall" style="font-weight: 1000; margin-top: 16px;">
+              <p *ngIf="weather.rainfall != null && weather.rainfall != undefined" style="font-weight: 1000; margin-top: 16px;">
                 <img style="max-width: 100%; margin: 0 auto;" src="assets/img/rainfall.svg" alt="Rainfall" /> {{weather.rainfall}} mm
               </p>
               <p *ngIf="weather.rainfallPercentage">({{weather.rainfallPercentage}}%)</p>
@@ -142,13 +148,17 @@
     <mat-tab label="Contact Us">
       <mat-card style="width: 80%;max-width: 860px; margin: 0 auto; margin-top: 12px; margin-bottom: 8px;">
         <div style="text-align: left; font-family: 'Montserrat', sans-serif;">
-          <b>Email: </b><a href="mailto:vss.enjoy@gmail.com" target="_new">vss.enjoy@gmail.com</a>
+          <b>Email: </b>
+          <a href="mailto:vss.enjoy@gmail.com" target="_new">vss.enjoy@gmail.com</a>
           <br/>
           <br/>
-          <b>Follow Us on Facebook: </b><a href="https://www.facebook.com/technicalavinashji/" target="_new">Techno android apps</a>
+          <b>Follow Us on Facebook: </b>
+          <a href="https://www.facebook.com/technicalavinashji/" target="_new">Techno android apps</a>
           <br/>
           <br/>
-          <u><b>Download Apps from Play Store:</b></u>
+          <u>
+            <b>Download Apps from Play Store:</b>
+          </u>
           <br/>
           <ul style="list-style-type: circle; margin-left: 24px;">
             <li>
