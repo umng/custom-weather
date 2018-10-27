@@ -18,13 +18,15 @@ import { ParseService } from './parse.service';
 import { ManageDataComponent, NewComponent } from './manage-data/manage-data.component';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     NewComponent,
-    ManageDataComponent
+    ManageDataComponent,
+    PrivacyPolicyComponent
   ],
   imports: [
     BrowserModule,
@@ -49,7 +51,8 @@ import { HttpClientModule } from '@angular/common/http';
     MatTabsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent },
-      { path: 'manage-data', component: ManageDataComponent }
+      { path: 'manage-data', component: ManageDataComponent },
+      { path: 'privacy-policy', component: PrivacyPolicyComponent }
     ])
   ],
   providers: [HomeComponent, ParseService, { provide: LocationStrategy, useClass: PathLocationStrategy }],
